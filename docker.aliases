@@ -1,0 +1,52 @@
+# Docker aliases
+
+# docklist - Liste aller laufenden Container-Namen.
+docklist() { docker ps | tail -n +2 | awk '{print $NF}' | sort; }
+
+# dockstats - Status als Liste aller laufenden Container.
+dockstats() { docker stats $(docker ps | tail -n +2 | awk '{print $NF}'); }
+
+# dockl - Liste aller laufenden Container-ID.
+alias dockl="docker ps -l -q"
+
+# dockps - Prozessliste aller laufenden Container.
+alias dockps="docker ps"
+
+# dockpa - Prozessliste aller Container (auch nicht laufende).
+alias dockpa="docker ps -a"
+
+# docki - List der Images.
+alias docki="docker images"
+
+# dockip - Netzwerk-Adresse eines Containers.
+alias dockip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+# dockkd - Container als Daemon ausführen. Beispiel: dockkd base /bin/echo hello
+alias dockkd="docker run -d -P"
+
+# dockki - Container interaktiv ausführen. Beispiel: dockki base /bin/bash
+alias dockki="docker run -i -t -P"
+
+# dockex - Kommando im Container interaktiv ausführen. Beispiel: dockex base /bin/bash
+alias dockex="docker exec -i -t"
+
+# dockstop - Alle laufenden Container anhalten.
+dockstop() { docker stop $(docker ps -a -q); }
+
+# dockrm - Alle laufenden Container löschen.
+dockrm() { docker rm $(docker ps -a -q); }
+
+# dockrmf - Alle laufenden Container anhalten und löschen.
+alias dockrmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
+
+# dockri - Alle Images löschen.
+dockri() { docker rmi $(docker images -q); }
+
+# dockbu - Dockerfile bauen. Beispiel: dockbu tcnksm/test 
+dockbu() { docker build -t=$1 .; }
+
+# dockrmdead - Alle nicht mehr benötigten (exited) Container entfernen.
+dockrmdead() { docker rm $(docker ps -q -f status=exited); }
+
+# dockrmidead - Alle nicht mehr benötigten (dangling) Images entfernen.
+dockrmidead() { docker rmi $(docker images -q --filter "dangling=true"); }
